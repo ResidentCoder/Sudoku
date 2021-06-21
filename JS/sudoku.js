@@ -158,3 +158,7 @@ function selectNumIsValid(board, tile, num) {
     return true;
   }
 }
+
+function trclick() {
+  console.log("Clicked");
+}
