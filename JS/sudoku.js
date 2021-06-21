@@ -19,15 +19,13 @@
 // . . . | . . . | . . . (cells 72 - 80) Section 8
 
 
-
 main();
 
 function main() {
-  console.log("Running...");
 
   var board_state = setup();
 
-  //updateBoard(board_state);
+  //printBoard(board_state);
 
   board_state = generatePuzzle(board_state);
 
@@ -50,7 +48,7 @@ function setup() {
     return board;
 }
 
-function updateBoard(board_state) {
+function printBoard(board_state) {
   var printStr = "";
 
   for (var i = 0; i < 9; i++) {
@@ -69,41 +67,41 @@ function updateBoard(board_state) {
 }
 
 function generatePuzzle(board) {
-  updateBoard(board);
+  printBoard(board);
 
   console.log("Generating Puzzle...");
 
   // Easy mode = generate 50 tiles
+  var numTilesGen = 0;
   var tilesGenerated = [];
 
-  for (var i = 0; i < 50; i++) {
-    var selectTile = Math.floor(Math.random() * 81);
-
-    while (tilesGenerated.includes(selectTile)) {
-      var selectTile = Math.floor(Math.random() * 81);
+  while(numTilesGen != 50) {
+    var randTile = Math.floor(Math.random() * 81);
+    // Starts tile generation loop again
+    if (tilesGenerated.includes(randTile)) {
+      continue;
     }
 
-    var selectNum = Math.floor(Math.random() * 9);
+    var randNum = Math.floor(Math.random() * 9) + 1;
 
-    while (!selectNumIsValid(board, selectTile, selectNum)) {
-      selectNum = Math.floor(Math.random() * 9);
+    if (selectNumIsValid(board, randTile, randNum)) {
+      // Insert new number into selected board tile
+      board[Math.floor(randTile / 9)][Math.floor((randTile % 9) / 3)][(randTile % 9) % 3] = randNum;
+      numTilesGen++;
     }
-
-    // Insert new number into selected board tile
-    board[Math.floor(selectTile / 9)][Math.floor((selectTile % 9) / 3)][(selectTile % 9) % 3] = selectNum;
   }
 
-  updateBoard(board);
+  printBoard(board);
 }
 
 function selectNumIsValid(board, tile, num) {
-  //console.log(tile);
 
   var rowNum = Math.floor(tile / 9);
   var columnNum = tile % 9;
-  var sectionNum = (Math.floor(row / 3) * 3) + (Math.floor(column / 3));
+  var sectionNum = (Math.floor(rowNum / 3) * 3) + (Math.floor(columnNum / 3));
 
-  //console.log(row + ", " + column + ", " + section);
+  console.log("Num: " + num);
+  console.log(rowNum + ", " + columnNum + ", " + sectionNum);
 
   var row = [];
   var column = [];
@@ -112,42 +110,51 @@ function selectNumIsValid(board, tile, num) {
   for (var i = 0; i < 9; i++) {
     row.push(board[rowNum][Math.floor(i/3)][i%3]);
     column.push(board[i][Math.floor(columnNum/3)][columnNum%3]);
+    // TODO: Fix, giving duplicated numbers in sections
     switch(sectionNum) {
       case 0:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3)][sectionNum % 3][i%3]);
         break;
       case 1:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3)][sectionNum % 3][i%3]);
         break;
       case 2:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3)][sectionNum % 3][i%3]);
         break;
       case 3:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 3][(sectionNum % 3)][i%3]);
         break;
       case 4:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 3][(sectionNum % 3)][i%3]);
         break;
       case 5:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 3][(sectionNum % 3)][i%3]);
         break;
       case 6:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 6][(sectionNum % 3)][i%3]);
         break;
       case 7:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 6][(sectionNum % 3)][i%3]);
         break;
       case 8:
-        section.push(board[][][]);
+        section.push(board[Math.floor(i/3) + 6][(sectionNum % 3)][i%3]);
         break;
     }
 
   }
 
-  if (!row.includes(num) && !column.includes(num) && !section.includes(num)) {
-    return true;
+  if (row.includes(num) || column.includes(num) || section.includes(num)) {
+    console.log(row.includes(num) + ", " + column.includes(num) + ", " + section.includes(num));
+
+    console.log("row:");
+    row.forEach(num => console.log(num));
+    console.log("column:");
+    column.forEach(num => console.log(num));
+    console.log("section:");
+    section.forEach(num => console.log(num));
+    return false;
   }
   else {
-    return false;
+    return true;
   }
 }
